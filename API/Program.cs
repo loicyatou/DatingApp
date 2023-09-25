@@ -15,7 +15,7 @@ builder.Services.AddIdentityServices(builder.Configuration); //IServiceContainer
 
 //middleware: component that sits between the web server and the applications processing logic. it intercepts incoming requests and performs some processing and optionally parses the request ot the next middleware componetn in the pipeline which is why the order really matters.
 
-var app = builder.Build();
+var app = builder.Build(); //turning your icollection into a service provider i.e. creating instance of your service. 
 
 // Configure the HTTP request pipeline. 
 //!The order of configurations here is very important. 

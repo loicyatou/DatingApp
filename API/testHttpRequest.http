@@ -1,0 +1,24 @@
+@url = https://localhost:5001/api
+
+### getusers
+GET {{url}}/users HTTP/1.1
+
+### login
+# @name loginResponse
+# @prompt username username 
+# @prompt password password
+POST {{url}}/account/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username":"{{username}}",
+    "password":"{{password}}"
+
+}
+
+###
+@token = {{loginResponse.response.body.token}}
+###getuser
+GET {{url}}/users/2 HTTP/1.1
+Authorization: Bearer {{token}} 
+

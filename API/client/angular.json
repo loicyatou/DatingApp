@@ -69,7 +69,7 @@
               "browserTarget": "client:build:development"
             },
             "options": {
-            "ssl": true
+              "ssl": true
             }
           },
           "defaultConfiguration": "development"

@@ -1,0 +1,21 @@
+<div class = "container mt-5">
+    <div *ngIf="!registerMode" style="text-align: center;">
+    
+        <h1>Find your match</h1>
+        <p class="lead">Come on in to view your matches... all you need to do is sign up</p>
+        <div class="text-centre">
+            <button (click)="registerToggle()" class="btn btn-primary btn-lg me-2">Register</button>
+            <button class="btn btn-primary btn-info btn-lg me-2">Learn more</button>
+        </div>
+    </div>
+
+    <div *ngIf="registerMode" class = "container mt-5">
+        <div style="text-align: center;">
+            <div class="text-centre">
+                <!-- parent class speaking to child class is in brackets, child class speaking to parent is in paraenthesisss -->
+                <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>  <!-- Home component is injecting the users that it gets into the register component here -->
+            </div>
+        </div>
+    </div>
+
+</div>

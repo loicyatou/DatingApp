@@ -27,7 +27,7 @@ public class UsersController : BaseApiController
         return await _context.Users.ToListAsync(); 
     }
 
-    [HttpGet("{id}")] //overloads method so that you can search for a specific user based off their ID. i.e. //api/users/2
+    [HttpGet("{id:int}")] //overloads method so that you can search for a specific user based off their ID. i.e. //api/users/2
     public async Task<ActionResult<AppUser>> GetUser(int id)
     {
         return _context.Users.Find(id);

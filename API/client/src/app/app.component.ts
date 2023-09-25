@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { AccountService } from './_services/account.service';
+import { User } from './_model/users';
 
 
 @Component({ //a decarator used to proide metadata (below) about the component
@@ -16,25 +18,28 @@ export class AppComponent implements OnInit, OnDestroy { //class acts as entry p
 
   title = 'Dating App';
   users: any; //!users can be any type. this is not used often. not type safety
-  private sub?: Subscription;
 
   //dependency inject http get inside the component. this must be a type of service
-  constructor(private http: HttpClient) { }
+  constructor(private accountService: AccountService) { }
 
 
   ngOnInit(): void {
-    //http get requests return observables which is a data stream that can be subscribed to allowing mutliple vlaues to be emitte over time.
-    //
-    this.sub = this.http.get('https://localhost:5001/api/users').subscribe({
-      next: response =>  this.users = response,  //specifies what will happen after the request is retrieved
-      error: error => console.log(error),//what we want to do if an error arise
-      complete: () => console.log('Request has completed') //what we want to do once the request is completed  
-    })
+    this.setCurrentUser();
   }
 
-//close the data stream with the observable
+
+  setCurrentUser() {
+    const userString = localStorage.getItem('user'); //check local storage to see if a uer is already logged in
+    if (!userString) return; //if not then they need to log in again
+
+    const user: User = JSON.parse(userString); //if there is a user convert to JSON and store as a user type to be stored inside the custom observable array that is shared across the application context in account servic
+    this.accountService.setCurrentUser(user);
+  }
+
+
+  //close the data stream with the observable
   ngOnDestroy(): void {
-    this.sub?.unsubscribe();
+    // this.sub?.unsubscribe();
   }
 
 }
