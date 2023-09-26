@@ -1,0 +1,15 @@
+<ng-container>
+    <button class="btn btn-outline-primary me-3" (click)="get500Error()">Test 500 get500Error</button>
+    <button class="btn btn-outline-primary me-3" (click)="get400Error()">Test 400 get400Error</button>
+    <button class="btn btn-outline-primary me-3" (click)="get401Error()">Test 401 get400Error</button>
+    <button class="btn btn-outline-primary me-3" (click)="get400ValidationError()">Test 400 get400Error</button>
+
+<!-- The if condition is checking whether we get a get400validation error. since it returns an array if the array is empty then there is no error 
+but if it has value it means there has been a validation error with user details. It will then display this fact to the user  -->
+<div class="row mt-5" *ngIf="get400ValidationError.length > 0"></div>
+<ul class="text-danger">
+    <li *ngFor="let error of validationErrors">
+        {{error}}
+    </li>
+</ul>
+</ng-container>

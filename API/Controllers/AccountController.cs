@@ -53,8 +53,7 @@ public class AccountController : BaseApiController
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-
-
+        
         var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName.ToLower() == loginDto.UserName.ToLower()); //Singleor.. method will return the first row that matches the parameter passed. if it doesnt exist it will return the default of the object whichi in this case is null
 
         if (user == null) return Unauthorized("Invalid username"); //http response that action is not auth

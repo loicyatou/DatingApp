@@ -19,6 +19,8 @@ var app = builder.Build(); //turning your icollection into a service provider i.
 
 // Configure the HTTP request pipeline. 
 //!The order of configurations here is very important. 
+
+app.UseMiddleware<ExceptionsMiddleware>();
 app.UseCors( builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200")); //The API is on one server, angular on another so we use this so that the instance of the web app we use allow cross domain requests. brower requires us to declare this since i blocks domains outside of host address for security reasons
 
 app.UseAuthentication(); //asks if you have a valid token

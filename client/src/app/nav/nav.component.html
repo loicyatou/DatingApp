@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="#">Dating App</a>
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+
+            <!-- Container for html links that you want visible under certain conditions -->
+            <ng-container *ngIf="this.accountService.currentUserSource$ |async">
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/members" routerLinkActive="active">Matches</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/lists" routerLinkActive="active">Lists</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/messages" routerLinkActive="active" aria-disabled="true">Messages</a>
+                </li>
+
+                <!-- other links your happy to be visible on page load up -->
+            </ng-container>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="/errors" routerLinkActive="active" aria-disabled="true">Errors test</a>
+            </li>
+        </ul>
+
+        <div class="dropdown" *ngIf="(accountService.currentUserSource$  | async) as user" dropdown>
+            <a class="dropdown-toggle text-light text-decoration-none" style="color: white;" dropdownToggle>Welcome {{user.userName}}</a>
+            <div class="dropdown-menu" *dropdownMenu>
+                <a class="dropdown-item">Edit Profile</a>
+                <a class="dropdown-item" (click)="logout()">Log Out</a>
+            </div>
+        </div>
+
+        <form #loginForm="ngForm" class="d-flex" (ngSubmit)="login()" autocomplete="false"
+            *ngIf="!(this.accountService.currentUserSource$ | async)">
+            <input name="user" [(ngModel)]="model.userName" class="form-control me-2" type="text"
+                placeholder="Username">
+
+            <input name="password" [(ngModel)]="model.password" class="form-control me-2" type="password"
+                placeholder="password">
+            <button class="btn btn-outline" type="submit">Login</button>
+        </form>
+    </div>
+</nav>
