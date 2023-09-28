@@ -2,6 +2,7 @@ import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
 import { User } from '../_model/users';
+import { environment } from 'src/environments/environment';
 
 //Purpose of class: This is an angula service that abstracts login logic so that it can be reusuable. The logic that it abstracts is making the http request from the client (angula nav bar) to the server(api)
 
@@ -10,7 +11,8 @@ import { User } from '../_model/users';
 
 export class AccountService {
 
-  baseUrl = 'https://localhost:5001/api/';
+  baseUrl = environment.apiUrl; //taken from your enviroment file. make sure you import the one you want at the top
+
   private currentUserSource = new BehaviorSubject<User | null>(null); //behaviour subject is commonly used in scenarios where you want to share and propagate the current state or value to multiple parts of your application. mostly used when you want to keep track of the current user and share that information across difference components or services.
 
   currentUserSource$ = this.currentUserSource.asObservable(); //converts it to an observable that you can subscribe to across the application context and receive the most recent value emitted by the behaviour subject. Using a next() method with this you can update the current value and notify all subscribers. 
@@ -25,7 +27,6 @@ export class AccountService {
         if (user) { //callback function will check if user is != null and transforms it into a json string to be stored in browser local storage so that it can persist when a user logs in
           localStorage.setItem('user', JSON.stringify(user))
           this.currentUserSource.next({...user});
-          // this.currentUserSource.next({...user});
         }
       })
     )

@@ -32,9 +32,4 @@ public class AppUser
 
 
     public List<Photo> Photos { get; set; } = new(); //Since the [table] attribute is passed to the Photo class a specific users photos are auto mapped to each other
-
-    // public int GetAge()
-    // {
-    //     return DateOfBirth.CalculateAge();
-    // }
 }

@@ -6,7 +6,7 @@ import {
   HttpInterceptor,
   HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, catchError } from 'rxjs';
+import { Observable, catchError, tap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { NavigationExtras, Router } from '@angular/router';
 
@@ -20,6 +20,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   //The diff here with middleware is that middleware works within a pipeline on the backend, intercptrors are global and work both front and back. 
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+
     return next.handle(request).pipe( //passes request to pipe so that it can handle any errors that might occur during the execution of the request it it has caught
       catchError((error: HttpErrorResponse) => {
         if (error) {

@@ -8,7 +8,7 @@ public static class DateTimeExtensions
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var age = today.Year - dob.Year;
 
-        return age = dob > today.AddYears(-age) ? age-- : age;
+        return _ = dob > today.AddYears(-age) ? age-- : age;
     }
 
 }

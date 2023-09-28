@@ -18,10 +18,12 @@ import { ErrorTestComponent } from './errors/error-test/error-test.component';
 import { ErrorInterceptor } from './_interceptors/error.interceptor';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
+import { MemeberCardComponent } from './member-card/memeber-card.component';
+import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 
 @NgModule({//decrator used to provide metadata about the module, such as declarations, imports, providers and bootstrap comps
   declarations: [ //specifies the components, directives and pipes that belong to this module
-    AppComponent, NavComponent, HomeComponent, RegisterComponent, MemberListComponent, MemberDetailComponent, ListsComponent, MessagesComponent, ErrorTestComponent, NotFoundComponent, ServerErrorComponent
+    AppComponent, NavComponent, HomeComponent, RegisterComponent, MemberListComponent, ListsComponent, MessagesComponent, ErrorTestComponent, NotFoundComponent, ServerErrorComponent, MemeberCardComponent
   ],
   imports: [ //defines the dependcies that module requires
     BrowserModule,
@@ -32,9 +34,10 @@ import { ServerErrorComponent } from './errors/server-error/server-error.compone
     SharedModule //allows us to seperate the angula imports and external imports for insance from ngx to your angula application
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true } //multi = false means replace the interceptors that are defualt added or true to add this interceptor to the existing onse
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }, //multi = false means replace the interceptors that are defualt added or true to add this interceptor to the existing onse
 
-    
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+
   ], //specifies the services that are available within the module. 
 
   bootstrap: [AppComponent], //specfies the root component that should launch when bootstrapped
