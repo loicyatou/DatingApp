@@ -1,4 +1,5 @@
 ﻿
+using System.Security.Claims;
 using API.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -35,6 +36,29 @@ public class UsersController : BaseApiController
     public async Task<ActionResult<MemberDTO>> GetUser(string username)
     {
         return await _userRepository.GetMemberAsync(username);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateUser(MemberUpdateDTO memberUpdateDTO)
+    {
+
+        //This is checking the claims of the user token and retreiving the value of the nameIdentifier of the user trying to make an update request. 
+        var Username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        //then it checks to see if that user exists in the database
+        var user = await _userRepository.GetUserByUsernameAsync(Username);
+
+        if (user == null) return NotFound();
+
+        //maps the information thats updated to the user found in the database and stores the changes in the datacontext
+        _IMapper.Map(memberUpdateDTO, user);
+
+        //triggers the change in the database
+        if (await _userRepository.SaveAllAsync()) return NoContent();
+
+        return BadRequest("Failed to update the user");
+
+
     }
 
 }

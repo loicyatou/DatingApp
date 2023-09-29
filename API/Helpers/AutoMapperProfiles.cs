@@ -14,6 +14,11 @@ public class AutoMapperProfiles : Profile
         //sql querying efficeincy reasons we calc the age of users here
         .ForMember(dest => dest.Age, opt => opt.MapFrom
         (src => src.DateOfBirth.CalculateAge()));
+        
         CreateMap<Photo,PhotoDTO>();
+
+        CreateMap<MemberUpdateDTO,AppUser>();
+
+    
     }
 }

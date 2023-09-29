@@ -20,10 +20,12 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { MemeberCardComponent } from './member-card/memeber-card.component';
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 
 @NgModule({//decrator used to provide metadata about the module, such as declarations, imports, providers and bootstrap comps
   declarations: [ //specifies the components, directives and pipes that belong to this module
-    AppComponent, NavComponent, HomeComponent, RegisterComponent, MemberListComponent, ListsComponent, MessagesComponent, ErrorTestComponent, NotFoundComponent, ServerErrorComponent, MemeberCardComponent
+    AppComponent, NavComponent, HomeComponent, RegisterComponent, MemberListComponent, ListsComponent, MessagesComponent, ErrorTestComponent, NotFoundComponent, ServerErrorComponent, MemeberCardComponent, MemberEditComponent
   ],
   imports: [ //defines the dependcies that module requires
     BrowserModule,
@@ -36,7 +38,9 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }, //multi = false means replace the interceptors that are defualt added or true to add this interceptor to the existing onse
 
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
 
   ], //specifies the services that are available within the module. 
 
