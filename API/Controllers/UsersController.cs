@@ -14,10 +14,14 @@ public class UsersController : BaseApiController
 
     private readonly IUserRepository _userRepository;
     private readonly IMapper _IMapper;
-    public UsersController(IUserRepository userRepository, IMapper imapper)
+    private readonly IPhotoService _photoService;
+
+    public UsersController(IUserRepository userRepository, IMapper imapper,
+    IPhotoService photoService)
     {
         this._userRepository = userRepository;
         this._IMapper = imapper;
+        _photoService = photoService;
     }
 
     //ActionResult: What a controller action returns in response to a browser request
@@ -43,7 +47,7 @@ public class UsersController : BaseApiController
     {
 
         //This is checking the claims of the user token and retreiving the value of the nameIdentifier of the user trying to make an update request. 
-        var Username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var Username = User.GetUsername();
 
         //then it checks to see if that user exists in the database
         var user = await _userRepository.GetUserByUsernameAsync(Username);
@@ -59,6 +63,80 @@ public class UsersController : BaseApiController
         return BadRequest("Failed to update the user");
 
 
+    }
+
+    [HttpPost("add-Photo")]
+    public async Task<ActionResult<PhotoDTO>> AddPhoto(IFormFile file)
+    {
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+
+        if (user == null) return NotFound();
+
+        var result = await _photoService.AddPhotoAsync(file);
+
+        if (result.Error != null) return BadRequest(result.Error.Message); //checks if the error object of the result is null or not
+
+        var photo = new Photo
+        {
+            Url = result.SecureUrl.AbsoluteUri,
+            PublicId = result.PublicId
+        };
+
+        if (user.Photos.Count == 0) photo.IsMain = true; //if it is there first photo upload then we set it to there main photo
+
+        user.Photos.Add(photo); //adds the photo to the photo array in the datacontext
+
+
+        if (await _userRepository.SaveAllAsync())
+        {
+            //sends back a 201 rathr than 200 so that th user gets more info/meta data about resource
+            return CreatedAtAction(nameof(GetUser), new {username = user.UserName}, _IMapper.Map<PhotoDTO>(photo)); 
+        }
+
+        return BadRequest("Problem adding photo");
+
+    }
+
+    [HttpPut("set-main-photo/{photoId}")]
+    public async Task<ActionResult> SetMainPhoto(int photoId){
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+
+        if(user == null) return NotFound();
+
+        var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
+
+        if(photo == null) return NotFound();
+
+        if(photo.IsMain) return BadRequest("this is already your main photo");
+
+        var currentMain = user.Photos.FirstOrDefault(x => x.IsMain); //check what the current main photo is
+        if(currentMain != null) currentMain.IsMain = false; //if there is a photo already on there set it to false
+
+        photo.IsMain = true; //set new photo to true
+
+        if(await _userRepository.SaveAllAsync()) return NoContent(); //sav changes to data context. i.e. save the new photo as the true new main pic
+
+        return BadRequest("Problem setting the main photo");
+    }
+
+    [HttpDelete("delete-photo/{photoId}")]
+    public async Task<ActionResult> DeletePhoto(int photoId){
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+
+        var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
+
+        if(photo == null) return BadRequest("You cannot delete your main photo");
+
+        if(photo.PublicId != null){
+            var result = await _photoService.DeletePhotoAsync(photo.PublicId);
+            if(result.Error != null) return BadRequest(result.Error.Message);
+        }
+
+        user.Photos.Remove(photo);
+
+        if(await _userRepository.SaveAllAsync()) return Ok();
+
+        return BadRequest("Problem deleting photo");
     }
 
 }

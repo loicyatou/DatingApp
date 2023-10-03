@@ -24,7 +24,7 @@ public class UserRepository : IUserRepository
     public async Task<AppUser> GetUserByUsernameAsync(string username)
     {
         return await _context.Users
-        .Include(p => p.Photos) //so that it also includes related data in other tables foreign keys
+        .Include(p => p.Photos) //so that it also includes related data in other tables foreign keys such as the photos table
         .SingleOrDefaultAsync(x => x.UserName == username);
     }
 

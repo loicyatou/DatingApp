@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_model/members';
 import { map, of } from 'rxjs';
+import { Photo } from '../_model/photo';
 
 @Injectable({
   providedIn: 'root'
@@ -44,4 +45,14 @@ export class MembersService {
       })
     )
   }
+
+  //pass photoid of photo selecte to be main to user controller i.e. api
+  setMainPhoto(photoId: number){
+    return this.http.put(this.baseUrl + 'users/set-main-photo/' + photoId, {})
+  }
+
+  deletePhoto(photoId: number){
+    return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId)
+  }
+
 }

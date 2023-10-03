@@ -54,7 +54,9 @@ public class AccountController : BaseApiController
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
         
-        var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName.ToLower() == loginDto.UserName.ToLower()); //Singleor.. method will return the first row that matches the parameter passed. if it doesnt exist it will return the default of the object whichi in this case is null
+        var user = await _context.Users.
+        Include(p => p.Photos).//data context doesnt auto cause relation between two tables so you must eagerly load the photos & appuser class together. i.e always include your relations so they are mapped togehther when your creating an instance of a table entity
+        SingleOrDefaultAsync(x => x.UserName.ToLower() == loginDto.UserName.ToLower()); //Singleor.. method will return the first row that matches the parameter passed. if it doesnt exist it will return the default of the object whichi in this case is null
 
         if (user == null) return Unauthorized("Invalid username"); //http response that action is not auth
 
@@ -73,10 +75,13 @@ public class AccountController : BaseApiController
         }
 
 
+
+
         return new UserDto //When a user attempts to login, if all goes well the JSON response is the users username and token
         {
             UserName = user.UserName,
-            Token = _tokenService.CreateToken(user)
+            Token = _tokenService.CreateToken(user),
+            PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url //find if they have a main photo and store it on local storage
         };
     }
 

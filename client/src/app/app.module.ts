@@ -22,10 +22,11 @@ import { MemeberCardComponent } from './member-card/memeber-card.component';
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
+import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 
 @NgModule({//decrator used to provide metadata about the module, such as declarations, imports, providers and bootstrap comps
   declarations: [ //specifies the components, directives and pipes that belong to this module
-    AppComponent, NavComponent, HomeComponent, RegisterComponent, MemberListComponent, ListsComponent, MessagesComponent, ErrorTestComponent, NotFoundComponent, ServerErrorComponent, MemeberCardComponent, MemberEditComponent
+    AppComponent, NavComponent, HomeComponent, RegisterComponent, MemberListComponent, ListsComponent, MessagesComponent, ErrorTestComponent, NotFoundComponent, ServerErrorComponent, MemeberCardComponent, MemberEditComponent, PhotoEditorComponent
   ],
   imports: [ //defines the dependcies that module requires
     BrowserModule,

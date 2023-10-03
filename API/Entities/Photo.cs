@@ -12,7 +12,7 @@ namespace API.Entities
 
         public bool IsMain { get; set; }
 
-        public int PublicId { get; set; }
+        public string PublicId { get; set; }
 
         public int AppUserId {get; set;} //added this as per convention so that the no photos can be uplaoded that are not matched with an AppUser ID
 

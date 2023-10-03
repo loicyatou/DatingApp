@@ -1,9 +1,9 @@
 ﻿using API.Data;
+using API.Helpers;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace API;
-
 public static class ApplicationExtensiosService
 
 //IServiceCollerction represents a container for registering and ersolving services that can be used throughout an application
@@ -14,7 +14,6 @@ public static class ApplicationExtensiosService
     //Extension methods allow you to extend existing classes without modifying their source code. They provide a way to add additional functionality to a class without having to inherit from it or create a separate wrapper class.
     
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
-
     {
         services.AddDbContext<DataContext>(opt =>
         {
@@ -27,9 +26,11 @@ public static class ApplicationExtensiosService
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //allowing automapper to scan all the assemblies in the application and discover any mappng profiles within these assemblies. Using reflection it will then search for classes that inherit from the profile base class and auto regiter them and their mapping configurations ith in the dependancy injection container in program.cs. You can now using the mapping capabilties with these classes 
+
+        services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+        services.AddScoped<IPhotoService,PhotoService>();
         return services;
 
     }
-
 
 }

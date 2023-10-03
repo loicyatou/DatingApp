@@ -25,8 +25,7 @@ export class AccountService {
       map((response: User) => { //map takes an emitted value and transforms it if not passes it along chain
         const user = response;
         if (user) { //callback function will check if user is != null and transforms it into a json string to be stored in browser local storage so that it can persist when a user logs in
-          localStorage.setItem('user', JSON.stringify(user))
-          this.currentUserSource.next({...user});
+          this.setCurrentUser(user);
         }
       })
     )
@@ -37,16 +36,16 @@ export class AccountService {
   register(model: any) {
     return this.http.post<User>(this.baseUrl + 'account/register', model).pipe( //request calls account/register controller and adds user to the DB
       map(user => { //response contains JSON of user created
-        if (user) { //if it was successful...
-          localStorage.setItem('user', JSON.stringify(user)); //stores user into the local storage so that they remain logged in
-          this.currentUserSource.next(user); //stores user username and token so its available until user logs out
+        if (user) { 
+          this.setCurrentUser(user)
         }
       })
     )
   }
 
   setCurrentUser(user: User) { //setter so that this can be used in other parts of the application when the state of the user needs to be changed.
-    this.currentUserSource.next(user);
+    localStorage.setItem('user', JSON.stringify(user)); //stores user into the local storage so that they remain logged in
+    this.currentUserSource.next(user);  //stores user username and token so its available until user logs out
   }
 
   logout() {

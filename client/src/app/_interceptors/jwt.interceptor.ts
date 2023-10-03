@@ -7,7 +7,7 @@ import {
 } from '@angular/common/http';
 
 import { AccountService } from '../_services/account.service';
-import { Observable, take, tap } from 'rxjs';
+import { Observable, take } from 'rxjs';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -30,6 +30,6 @@ export class JwtInterceptor implements HttpInterceptor {
         }
       }
     })
-    return next.handle(request).pipe(); //sends control to next handler in the pipeline
+    return next.handle(request); //sends control to next handler in the pipeline
   }
 }
