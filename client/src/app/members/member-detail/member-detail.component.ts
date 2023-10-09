@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TimeagoModule } from 'ngx-timeago';
 import { Member } from 'src/app/_model/members';
 import { MembersService } from 'src/app/_services/members.service';
 
@@ -13,7 +14,7 @@ import { MembersService } from 'src/app/_services/members.service';
 
   standalone: true, //have to make this a standalone component because it wants to use ng gallery which is a standalone feautre. you cannot put standalone feautres in components that rely on urls. Thus you must now import its own dependecies since it is no longer part of the app module.
 
-  imports: [CommonModule, TabsModule, GalleryModule,] //manually import common modules into the component so it can still use all the features it had access to before it became standalone. commonmodules imports all teh basic angular directives used in the html file
+  imports: [CommonModule, TabsModule, GalleryModule, TimeagoModule] //manually import common modules into the component so it can still use all the features it had access to before it became standalone. commonmodules imports all teh basic angular directives used in the html file
 })
 export class MemberDetailComponent implements OnInit {
   member: Member | undefined;

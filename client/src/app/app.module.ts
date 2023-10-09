@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavComponent } from './nav/nav.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { MemberListComponent } from './members/member-list/member-list.component';
@@ -23,10 +23,12 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
+import { TextInputComponent } from './_forms/text-input/text-input.component';
+import { DatePickerComponent } from './_forms/date-picker/date-picker.component';
 
 @NgModule({//decrator used to provide metadata about the module, such as declarations, imports, providers and bootstrap comps
   declarations: [ //specifies the components, directives and pipes that belong to this module
-    AppComponent, NavComponent, HomeComponent, RegisterComponent, MemberListComponent, ListsComponent, MessagesComponent, ErrorTestComponent, NotFoundComponent, ServerErrorComponent, MemeberCardComponent, MemberEditComponent, PhotoEditorComponent
+    AppComponent, NavComponent, HomeComponent, RegisterComponent, MemberListComponent, ListsComponent, MessagesComponent, ErrorTestComponent, NotFoundComponent, ServerErrorComponent, MemeberCardComponent, MemberEditComponent, PhotoEditorComponent, TextInputComponent, DatePickerComponent
   ],
   imports: [ //defines the dependcies that module requires
     BrowserModule,
@@ -34,6 +36,7 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
     HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
+    ReactiveFormsModule,
     SharedModule //allows us to seperate the angula imports and external imports for insance from ngx to your angula application
   ],
   providers: [

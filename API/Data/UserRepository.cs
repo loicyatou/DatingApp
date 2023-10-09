@@ -28,7 +28,7 @@ public class UserRepository : IUserRepository
         .SingleOrDefaultAsync(x => x.UserName == username);
     }
 
-        public async Task<MemberDTO> GetMemberAsync(string username)
+    public async Task<MemberDTO> GetMemberAsync(string username)
     {
         //rather than creating a query that searches every column of the db now it only looks at where the username matches the username provided in the method. Makes querying more efficient and less taxing on the DB
         return await _context.Users
@@ -44,11 +44,32 @@ public class UserRepository : IUserRepository
         .ToListAsync();
     }
 
-        public async Task<IEnumerable<MemberDTO>> GetMembersAsync()
+    public async Task<PagedList<MemberDTO>> GetMembersAsync(UserParams userParams)
     {
-        return await _context.Users
-        .ProjectTo<MemberDTO>(_imapper.ConfigurationProvider)
-        .ToListAsync();
+        var query = _context.Users.AsQueryable();
+
+        //query defintion
+        query = query.Where(u => u.UserName != userParams.CurrentUsername); //remove from set users who match current users signed in
+        query = query.Where(u => u.Gender == userParams.Gender); //only add those users who are he opposite gender
+
+
+        //age of matches 
+        var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge - 1));
+        var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge));
+        query = query.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
+
+
+        query = userParams.OrderBy switch //switch statement which determines the differnet conditions underwhich a filter will apply
+        {
+            "created" => query.OrderByDescending(u => u.Created), //if userParams.OrderBy is = "created@ it will order the list by the descending order they were createed
+            _ => query.OrderByDescending(u => u.LastActive) //oitherwise it will default to the dates they were last active
+        };
+
+        //when a user makes a request for all the users it will now return those users into seperate pages depending on the page number and pagesize specified.
+        return await PagedList<MemberDTO>.CreateAsync(
+        query.ProjectTo<MemberDTO>(_imapper.ConfigurationProvider),
+        userParams.PageNumber,
+        userParams.PageSize);
     }
 
     public async Task<bool> SaveAllAsync()

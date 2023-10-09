@@ -24,7 +24,8 @@ public class TokenService : ITokenService
     {
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.NameId,user.UserName) //what will be in the claims about the token i.e. who the user claims to be. here it will be the users username
+            new Claim(JwtRegisteredClaimNames.UniqueName,user.UserName), //what will be in the claims about the token i.e. who the user claims to be. here it will be the users username
+            new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString())
         };
 
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature); //takes the key from config and decides the algo that will be used to generate a digital signature. the same algo will vadlidate the integirty of the signature during a session

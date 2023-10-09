@@ -5,6 +5,11 @@ import { ToastrModule } from 'ngx-toastr';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FileUploadModule } from 'ng2-file-upload';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { TimeagoModule } from "ngx-timeago";
+
 
 
 
@@ -20,14 +25,22 @@ import { FileUploadModule } from 'ng2-file-upload';
     NgxSpinnerModule.forRoot({ //forRoot(if i am to use this module anwyehre in the application context this is the configuration I want to use)
       type: 'pacman'
     }),
-    FileUploadModule
+    FileUploadModule,
+    BsDatepickerModule.forRoot(),
+    PaginationModule.forRoot(),
+    ButtonsModule.forRoot(),
+    TimeagoModule.forRoot()
   ],
   exports:[
     BsDropdownModule,
     ToastrModule,
     TabsModule,
     NgxSpinnerModule,
-    FileUploadModule
+    FileUploadModule,
+    BsDatepickerModule,
+    PaginationModule,
+    ButtonsModule,
+    TimeagoModule
   ]
 })
 export class SharedModule { }

@@ -1,7 +1,7 @@
 <div class="row" *ngIf="member">
     <div class="col-4">
         <div class="card">
-            <img src="{{member.photoURL || './/assets/user.png'}}" alt="{{member.knownAs}}"
+            <img  [src]="member.photoURL || './assets/user.png'" alt="{{member.knownAs}}"
                 class="card-img-top img-thumbnail">
 
             <div class="card-body">
@@ -16,13 +16,14 @@
                 </div>
 
                 <div>
+                    <!-- angular will format date formats for you if specified hence why | date convets the format  -->
                     <strong>Last active:</strong>
-                    <p>{{member.lastActive}}</p>
+                    <p>{{member.lastActive | timeago}}</p>
                 </div>
 
                 <div>
                     <strong>Member since:</strong>
-                    <p>{{member.created}}</p>
+                    <p>{{member.created  | date}}</p>
                 </div>
             </div>
 

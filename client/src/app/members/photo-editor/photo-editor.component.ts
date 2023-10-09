@@ -77,6 +77,13 @@ export class PhotoEditorComponent implements OnInit {
       if (response) {
         const photo = JSON.parse(response);
         this.member?.photos.push(photo);
+
+        //just a check to see if its the users first upload. If it is it is auto set to main so this will check if the photo is a main which it will only ever be when triggering this method if its the first photo ever uploaded
+        if(photo.isMain && this.user && this.member){
+          this.user.photoUrl = photo.url
+          this.member.photoURL = photo.url;
+          this.accountService.setCurrentUser(this.user);
+        }
       }
     }
   }

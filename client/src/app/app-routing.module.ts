@@ -11,6 +11,7 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { preventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 const routes: Routes = [
   { path: '', component: HomeComponent }, //applies authguard to chec kwhether a user can activiate the route
@@ -34,7 +35,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes),BsDatepickerModule.forRoot()],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
