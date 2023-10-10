@@ -18,7 +18,7 @@ public class LogUserActivity : IAsyncActionFilter
 
         var repo = resultContext.HttpContext.RequestServices.GetRequiredService<IUserRepository>(); //using dependency injection we get acess to the IUserRepository. This is done through dependancy injectio for its advantages
 
-        var user = await repo.GetUserByIDAsync(int.Parse(userId)); //could use username but having iD makes query faster and sharper
+        var user = await repo.GetUserByIDAsync(userId); //could use username but having iD makes query faster and sharper
         user.LastActive = DateTime.UtcNow; //whole purpose of method is to update the users Last Active property.
         await repo.SaveAllAsync();
     }

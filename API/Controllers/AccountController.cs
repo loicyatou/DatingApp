@@ -49,7 +49,7 @@ public class AccountController : BaseApiController
 
         return new UserDto //When a user attempts to register, if all goes well the JSON response is the users username and token
         {
-            UserName = user.UserName,
+            Username = user.UserName,
             Token = _tokenService.CreateToken(user),
             KnownAs = user.KnownAs,
             Gender = user.Gender
@@ -86,7 +86,7 @@ public class AccountController : BaseApiController
 
         return new UserDto //When a user attempts to login, if all goes well the JSON response is the users username and token
         {
-            UserName = user.UserName,
+            Username = user.UserName,
             Token = _tokenService.CreateToken(user),
             PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url, //find if they have a main photo and store it on local storage
             KnownAs = user.KnownAs,

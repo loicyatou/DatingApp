@@ -2,13 +2,15 @@
 
 namespace API;
 
-public static class ClaimsPrinciplesExtension 
+public static class ClaimsPrinciplesExtension
 {
-public static string GetUsername(this ClaimsPrincipal User){
-    return User.FindFirst(ClaimTypes.Name)?.Value;
-}
+    public static string GetUsername(this ClaimsPrincipal user)
+    {
+        return user.FindFirst(ClaimTypes.Name)?.Value;
+    }
 
-public static string GetUserID(this ClaimsPrincipal User){
-    return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-}
+    public static int GetUserID(this ClaimsPrincipal user)
+    {
+        return int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+    }
 }

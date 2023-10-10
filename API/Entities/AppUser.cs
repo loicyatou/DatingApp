@@ -32,4 +32,10 @@ public class AppUser
 
 
     public List<Photo> Photos { get; set; } = new(); //Since the [table] attribute is passed to the Photo class a specific users photos are auto mapped to each other
+
+//two navigation properties
+//- This relationship indicates that an `AppUser` can have multiple `UserLike` entities in the `LikedByUsers` collection, representing the users who have liked them.
+//- And an `AppUser` can have multiple `UserLike` entities in the `LikedUsers` collection, representing the users they have liked.
+    public List<UserLike> LikedByUsers {get;set;}
+    public List<UserLike> LikedUsers {get;set;}
 }
