@@ -1,1 +1,67 @@
-<p>messages works!</p>
+<div class="mb-4 d-flex">
+    <div class="btn-group" name="container">
+        <button class="btn btn-primary" [(ngModel)]="container" btnRadio="Unread" (click)="loadMessages()">
+            <i class="fa fa-envelope"></i> Unread
+        </button>
+        <button class="btn btn-primary" [(ngModel)]="container" btnRadio="Inbox" (click)="loadMessages()">
+            <i class="fa fa-envelope-open"></i> Inbox
+        </button>
+        <button class="btn btn-primary" [(ngModel)]="container" btnRadio="Outbox" (click)="loadMessages()">
+            <i class="fa fa-paper-plane"></i> Outbox
+        </button>
+    </div>
+</div>
+
+<div class="row" *ngIf="!messages || messages.length === 0">
+    <h3>No messages</h3>
+</div>
+
+<div class="row" *ngIf="messages && messages.length > 0">
+    <!-- Table for the messages -->
+    <table class="table-hover" style="cursor: pointer;">
+        <thead>
+            <!-- represent the headers of each column in the table -->
+            <tr>
+                <th style="width: 40%;">Message</th>
+                <th style="width: 20%;">From / To</th>
+                <th style="width: 20%;">Sent / Recieved</th>
+                <th style="width: 20%;"></th>
+            </tr>
+        </thead>
+
+        <tbody class="align-middle">
+            <!-- tr is a row -->
+            <tr [hidden]="loading" *ngFor="let message of messages" routerLink="{{container === 'Outbox'
+            ? '/members/' + message.recipientUsername
+            : '/members/' + message.senderUsername}}" [queryParams]="{tab: 'messages'}"> <!-- queryParams adds 'messages' onto the url in the browser. this is so that when you click on a sell it sends you to that url which is the url for messages. url should say ...tab=messages so check it -->
+
+                <!-- td is a cell in a column -->
+                <td>{{message.content}}</td>
+                <td>
+                    <div *ngIf="container === 'Outbox'">
+                        <img class="img-circle rounded-circle me-2"
+                            src="{{message.recipientPhotoUrl || '.assets/user.png'}}" alt="recipient photo">
+                        <strong>{{message.recipientUsername | titlecase}}</strong>
+                    </div>
+
+                    <div *ngIf="container !== 'Outbox'">
+                        <img class="img-circle rounded-circle me-2"
+                            src="{{message.senderPhotoUrl || '.assets/user.png'}}" alt="recipient photo">
+                        <strong>{{message.senderUsername | titlecase}}</strong>
+                    </div>
+                </td>
+
+                <td>{{message.messageSent | timeago}}</td>
+                <td>
+                    <!-- stopPropogation prevents the clicking event from reaching anything else but the method attached to this button. this is so that clicking the button on the row does not trigger a move to the messages -->
+                    <button (click)="$event.stopPropagation()" (click)="deleteMessage(message.id)" class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="d-flex justify-content-center" style="margin-top: 20px;" *ngIf=" !loading && pagination && messages && messages.length === 0">
+    <pagination [boundaryLinks]="true" [totalItems]="pagination.totalItems" [itemsPerPage]="pagination.itemsPerPage"
+        [maxSize]="10" [(ngModel)]="pagination.currentPage" (pageChanged)="pageChanged($event)" previousText="&lsaquo;"
+        nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;"></pagination>

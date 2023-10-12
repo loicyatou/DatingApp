@@ -1,4 +1,4 @@
-<div class="row" *ngIf="member">
+<div class="row">
     <div class="col-4">
         <div class="card">
             <img  [src]="member.photoURL || './assets/user.png'" alt="{{member.knownAs}}"
@@ -30,33 +30,33 @@
             <div class="card-footer">
                 <div class="btn-group de-flex"></div>
                 <button class="btn btn-primary">Like</button>
-                <button class="btn btn-sucess" style="background-color: rgb(32,178,170);">Messages</button>
+                <button (click)="selectTab('Messages')" class="btn btn-sucess" style="background-color: rgb(32,178,170);">Messages</button>
             </div>
         </div>
     </div>
 
     <div class="col-8">
-        <!-- provided by ngx bootstrap. To edit specific design aspects about it you have to do it in css. cant be done here so use class name. it wa sdone in the global css file called styles.css -->
-        <tabset class="member-tabset">
-            <tab heading="About {{member.knownAs}}">
+        <!-- #... is a way to give components a reference name so you can apply logic to it in its component-->
+        <tabset class="member-tabset" #memberTabs>
+            <tab heading="About {{member.knownAs}}" (selectTab)="onTabActivated($event)">
                 <h4>Description</h4>
                 <p>{{member.introduction}}</p>
                 <h4>Looking for</h4>
                 <p>{{member.lookingFor}}</p>
             </tab>
 
-            <tab heading="Intreasts">
+            <tab heading="Intreasts" (selectTab)="onTabActivated($event)">
                 <h4>Intreasts</h4>
                 <p>{{member.interests}}</p>
             </tab>
 
-            <tab heading="Photos" #photoTab="tab" class="gallery">
+            <tab heading="Photos" #photoTab="tab" class="gallery" (selectTab)="onTabActivated($event)">
                     <!-- injects the images from the component class into a gallery provided by ng gallery -->
                     <gallery *ngIf="photoTab.active" [items]="images"></gallery>
             </tab>
 
-            <tab heading="Messages">
-                <p>Messages will go here</p>
+            <tab heading="Messages" (selectTab)="onTabActivated($event)">
+                <app-member-messages [username]="member.userName" [messages]="messages"></app-member-messages>
             </tab>
             
         </tabset>

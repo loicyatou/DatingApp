@@ -13,6 +13,9 @@ public class DataContext : DbContext
     public DbSet<AppUser> Users { get; set; } //DbSet is a table so here the AppUser class is the table and its variables the columns
     public DbSet<UserLike> Likes { get; set; }
 
+    
+    public DbSet<Message> Messages { get; set; }
+
     //creating a many to many relationship table manually so that users can like many profiles and also have there profiled liked by many users
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -34,6 +37,18 @@ public class DataContext : DbContext
         .WithMany(l => l.LikedByUsers)
         .HasForeignKey(s => s.TargetUserID)
         .OnDelete(DeleteBehavior.ClientCascade);
+
+        //set up many to many relationship between appuser and messages
+        modelBuilder.Entity<Message>()
+            .HasOne(u => u.Recipient)//one receipent with...
+            .WithMany(m => m.MessagesRecieved) //many messages recieved
+            .OnDelete(DeleteBehavior.Restrict); //as long as both users have not deleted the record keep it on the record of the user who hasnt deleted it
+
+        modelBuilder.Entity<Message>()
+            .HasOne(u => u.Sender)//one receipent with...
+            .WithMany(m => m.MessagesSent) //many messages recieved
+            .OnDelete(DeleteBehavior.Restrict); //as long as both users have not deleted the record keep it on the record of the user who hasnt deleted it
+
     }
 
 }
