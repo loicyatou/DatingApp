@@ -1,25 +1,56 @@
 ﻿using API.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace API;
 
-public class DataContext : DbContext
+//There is a specific order that the relationships and maping for the db context must be in when using IdentityDbContext this is
+//IdentityDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
+
+public class DataContext : IdentityDbContext<AppUser, AppRole, int, IdentityUserClaim<int>,
+AppUserRole, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>> //taken from nuget gallaery Microsoft.aspnet.identity.entiryframewoerk etc 
 {
+
+    // Represents the database context for the application, extending IdentityDbContext with custom user and role entities.
+
+    // Generic Type Parameters:
+    // - TUser: Represents the custom user entity type (AppUser).
+    // - TRole: Represents the custom role entity type (AppRole).
+    // - TKey: Specifies the type of the primary key for the user and role entities (int).
+    // - TUserClaim: Represents additional claims associated with the user (IdentityUserClaim<int>).
+    // - TUserRole: Represents the relationship between users and roles (AppUserRole).
+    // - TUserLogin: Represents external logins for the user (IdentityUserLogin<int>).
+    // - TRoleClaim: Represents additional claims associated with the role (IdentityRoleClaim<int>).
+    // - TUserToken: Represents the authentication tokens for the user (IdentityUserToken<int>).
 
     public DataContext(DbContextOptions options) : base(options) //the base class is DbContext
     {
     }
 
-    public DbSet<AppUser> Users { get; set; } //DbSet is a table so here the AppUser class is the table and its variables the columns
+    //IdentityDBContext does this for us dont need to declare this anymore
+    // public DbSet<AppUser> Users { get; set; } 
     public DbSet<UserLike> Likes { get; set; }
 
-    
+
     public DbSet<Message> Messages { get; set; }
 
-    //creating a many to many relationship table manually so that users can like many profiles and also have there profiled liked by many users
+    //creating a many to many relationship table manually etc
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<AppUser>()
+        .HasMany(ur => ur.UserRoles)
+        .WithOne(u => u.User)
+        .HasForeignKey(u => u.UserId)//identiftydbcontext sets this id
+        .IsRequired();
+
+        modelBuilder.Entity<AppRole>()
+        .HasMany(ur => ur.UserRoles)
+        .WithOne(u => u.Role)
+        .HasForeignKey(u => u.RoleId)
+        .IsRequired();
 
         //the primary key for this many to many relationship is the source and target id in terms of liking and reciecing likes
         modelBuilder.Entity<UserLike>()

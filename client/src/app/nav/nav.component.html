@@ -12,7 +12,13 @@
                     <a class="nav-link" routerLink="/lists" routerLinkActive="active">Lists</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" routerLink="/messages" routerLinkActive="active" aria-disabled="true">Messages</a>
+                    <a class="nav-link" routerLink="/messages" routerLinkActive="active"
+                        aria-disabled="true">Messages</a>
+                </li>
+
+                <li *appHasRole="['Admin', 'Moderator']" class="nav-item">
+                    <a class="nav-link" routerLink="/admin" routerLinkActive="active"
+                        aria-disabled="true">Admin</a>
                 </li>
 
                 <!-- other links your happy to be visible on page load up -->
@@ -24,7 +30,8 @@
 
         <div class="dropdown" *ngIf="(accountService.currentUserSource$  | async) as user" dropdown>
             <img [src]="user.photoUrl || './assets/user.png'" alt="user photo">
-            <a class="dropdown-toggle text-light text-decoration-none ms-2" style="color: white;" dropdownToggle>Welcome {{user.knownAs}}</a>
+            <a class="dropdown-toggle text-light text-decoration-none ms-2" style="color: white;" dropdownToggle>Welcome
+                {{user.knownAs}}</a>
             <div class="dropdown-menu" *dropdownMenu>
                 <a class="dropdown-item" routerLink="/member/edit">Edit Profile</a>
                 <a class="dropdown-item" (click)="logout()">Log Out</a>

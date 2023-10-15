@@ -1,7 +1,9 @@
 using System.Text;
 using API;
+using API.Entities;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -33,13 +35,17 @@ app.MapControllers();
 //! This block of code is adding our migrations and updating the database automatically as opposed to us using dotnet cli i.e. dotnet ef migrations etc to make changes to the database. It creates a scope for application services, retrieves the `DataContext` from the dependency injection container, applies pending database migrations, and seeds initial data into the database. Any errors that occur during these operations are logged using a logger
 using var scope = app.Services.CreateScope(); //grabs the services currently given to the app instance and groups them into an object
 var services = scope.ServiceProvider; //responsible for resolving and providing instances of services registered in the application's dependency injection container.
-try 
+try
 {
     var context = services.GetRequiredService<DataContext>(); //grabs an instance of the datacontext. if it it cannot getRequiredService will throw exception
+    
+    var userManager = services.GetRequiredService<UserManager<AppUser>>(); //gets instance of usermnager from identity and provides with it a range of APIS for managing user-related operators such as creating users, updating user information and managering user roles
+
+     var roleManager = services.GetRequiredService<RoleManager<AppRole>>(); //provides api for manaing roles.
 
     await context.Database.MigrateAsync(); //applies any pending migraitons if it doesnt already exist in DB
 
-    await Seed.SeedUsers(context); //inserts dummy data into the DB
+    await Seed.SeedUsers(userManager,roleManager); //This line calls the `SeedUsers` method from the `Seed` class and passes the `userManager` instance as an argument. This method is responsible for seeding user data into the database using the provided `UserManager`. It creates and saves dummy user data to the database
 }
 catch (Exception ex) //have to use try catch because it wont pass through pipeline so wont get caught 
 {

@@ -1,8 +1,9 @@
 export interface User //interfaces in typescript 
 { 
-userName: string;
+username: string;
 token: string
 photoUrl: string;
 knownAs: string
 gender: string;
+roles: string[]
 }

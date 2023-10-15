@@ -44,6 +44,9 @@ export class AccountService {
   }
 
   setCurrentUser(user: User) { //setter so that this can be used in other parts of the application when the state of the user needs to be changed.
+    user.roles = []; //check there roles and see if there are multiple
+    const roles = this.getDecodedToken(user.token).role; //gets the roles of the user from the token
+    Array.isArray(roles) ? user.roles = roles : user.roles.push(roles); //if there are multiple roles to add then it will push those roles onto the roles array. if theres only one it just adds it to it
     localStorage.setItem('user', JSON.stringify(user)); //stores user into the local storage so that they remain logged in
     this.currentUserSource.next(user);  //stores user username and token so its available until user logs out
   }
@@ -52,4 +55,11 @@ export class AccountService {
     localStorage.removeItem('user')
     this.currentUserSource.next(null);
   }
+
+  getDecodedToken(token: string){ //takes the token so that it can get specific informatuon out of it. here we want the second section of the token which shows the roles of the user
+    return JSON.parse //grabs the json and converts it into an array
+    (atob(token.split('.')[1])) //atob decodes the base64 encoded payload i.e. the token so that we know the info
+  }
+
+  //returns only the second section that we need
 }

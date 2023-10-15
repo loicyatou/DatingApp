@@ -1,17 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Entities;
 
-public class AppUser
+public class AppUser : IdentityUser<int> //part of .net --> creates superior hashing for you. the main properties for this are handles for you and you can call it by default. they are commented out below ==> <int> tells .net we want our appuser id to be an int
 {
 
-    public int Id { get; set; } //Id is a default term for the primary key but if you wanted a diff name then give it a [key] attribute
-    public string UserName { get; set; }
+    // public int Id { get; set; }
+    // public string UserName { get; set; }
 
-    public byte[] PasswordHash { get; set; }
+    // public byte[] PasswordHash { get; set; }
 
-    public byte[] PasswordSalt { get; set; }
+    // public byte[] PasswordSalt { get; set; }
 
     public DateOnly DateOfBirth { get; set; }
 
@@ -43,5 +44,7 @@ public class AppUser
     //navigation properties for messages sent and recieved
     public List<Message> MessagesSent { get; set; }
     public List<Message> MessagesRecieved { get; set; }
+
+    public ICollection<AppUserRole> UserRoles { get; set; }
 
 }

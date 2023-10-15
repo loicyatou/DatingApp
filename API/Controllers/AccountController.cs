@@ -4,6 +4,7 @@ using API.DTOs;
 using API.Entities;
 using API.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,13 +12,13 @@ namespace API;
 
 public class AccountController : BaseApiController
 {
-    private readonly DataContext _context;
+    private readonly UserManager<AppUser> _userManager;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
 
-    public AccountController(DataContext context, ITokenService tokenService, IMapper _mapper)
+    public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, IMapper _mapper)
     {
-        this._context = context;
+        this._userManager = userManager;
         this._tokenService = tokenService;
         this._mapper = _mapper;
     }
@@ -33,24 +34,22 @@ public class AccountController : BaseApiController
 
         //using: defines a scope at the end of which an object is disposed. Needed here becuase HMAC will use resources without destroying them at the end
 
-        using var hmac = new HMACSHA512(); //randomly generated key that we are going to use as the password salt
-
         var user = _mapper.Map<AppUser>(registerDto);
 
-
         user.UserName = registerDto.UserName.ToLower();
-        user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));//Encoding: put seq of characters into a speciaised format for effiecnt transmision or storage. this is so that you can put the password into the byte array. 
-        user.PasswordSalt = hmac.Key;
 
+        var result = await _userManager.CreateAsync(user, registerDto.Password); //creates the user into the new identity context and saves it automatically
 
-        _context.Users.Add(user); //does not auto add users into DB yet but stores them in memory ready to perform a DB operation once you request a sync. 
+        if(!result.Succeeded) return BadRequest(result.Errors); 
 
-        await _context.SaveChangesAsync(); //tracks for any changes made in the dataBase context ^ and performs the update. 
+        var roleResult = await _userManager.AddToRoleAsync(user, "Member");
+
+        if(!roleResult.Succeeded) return BadRequest(result.Errors);
 
         return new UserDto //When a user attempts to register, if all goes well the JSON response is the users username and token
         {
             Username = user.UserName,
-            Token = _tokenService.CreateToken(user),
+            Token = await _tokenService.CreateToken(user),
             KnownAs = user.KnownAs,
             Gender = user.Gender
         };
@@ -61,33 +60,20 @@ public class AccountController : BaseApiController
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
 
-        var user = await _context.Users.
-        Include(p => p.Photos).//data context doesnt auto cause relation between two tables so you must eagerly load the photos & appuser class together. i.e always include your relations so they are mapped togehther when your creating an instance of a table entity
-        SingleOrDefaultAsync(x => x.UserName.ToLower() == loginDto.UserName.ToLower()); //Singleor.. method will return the first row that matches the parameter passed. if it doesnt exist it will return the default of the object whichi in this case is null
+        var user = await _userManager.Users
+        .Include(p => p.Photos)//data context doesnt auto cause relation between two tables so you must eagerly load the photos & appuser class together. i.e always include your relations so they are mapped togehther when your creating an instance of a table entity
+        .SingleOrDefaultAsync(x => x.UserName.ToLower() == loginDto.UserName.ToLower()); //Singleor.. method will return the first row that matches the parameter passed. if it doesnt exist it will return the default of the object whichi in this case is null
 
         if (user == null) return Unauthorized("Invalid username"); //http response that action is not auth
 
-        using var hmac = new HMACSHA512(user.PasswordSalt); //1. get the users salt val associated with account
+        var result = await _userManager.CheckPasswordAsync(user,loginDto.Password); //identity now checks for us whether the password is true or false
 
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password)); //2. get what the user has inputted as a password
-
-        //3. use a for loop and iterate through each character of the byte array^ and see if there are in   consistencies betwee the hashed password version theyve inputted & whats available in the database 
-
-        for (int i = 0; i < computedHash.Length; i++)
-        {
-            if (computedHash[i] != user.PasswordHash[i])
-            {
-                return Unauthorized("Invalid Password");
-            }
-        }
-
-
-
+        if(!result) return Unauthorized("Invalid Password");
 
         return new UserDto //When a user attempts to login, if all goes well the JSON response is the users username and token
         {
             Username = user.UserName,
-            Token = _tokenService.CreateToken(user),
+            Token = await _tokenService.CreateToken(user),
             PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url, //find if they have a main photo and store it on local storage
             KnownAs = user.KnownAs,
             Gender = user.Gender
@@ -101,7 +87,7 @@ public class AccountController : BaseApiController
         //it is going to check the db to see if the user exists. if it does it will return true and false otherwise. 
 
         //it will iterate through the table to check if there are any matching usernames
-        return await _context.Users.AnyAsync(x => x.UserName == username.ToLower());
+        return await _userManager.Users.AnyAsync(x => x.UserName == username.ToLower());
     }
 
 }

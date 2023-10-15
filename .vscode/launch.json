@@ -8,6 +8,13 @@
             "processName": "API"
         },
         {
+            "name": "Angular Serve",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200",
+            "webRoot": "C:/Users/loic.yatou/LoicDoc/Study/AspnetAngularCourse/DatingApp/ClientApp"
+          },
+        {
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
             // For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md.

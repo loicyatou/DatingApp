@@ -35,7 +35,8 @@ public class UsersController : BaseApiController
         var currentUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername()); //Usder is a claimsPrinciple provided by aspnet which essnetially knows info about the user that sent the request based off the authentication token. so it reads the users username, password and roles etc. so now you can get the user currently signed ins username so that you can remove them off the list of matches returned 
         userParams.CurrentUsername = currentUser.UserName;
 
-        if(string.IsNullOrEmpty(userParams.Gender)){ //if the pref gender of the users matches are unspecified..
+        if (string.IsNullOrEmpty(userParams.Gender))
+        { //if the pref gender of the users matches are unspecified..
             userParams.Gender = currentUser.Gender == "male" ? "female" : "male"; //...return matches of opposite gender
         }
 
@@ -43,7 +44,7 @@ public class UsersController : BaseApiController
         var users = await _userRepository.GetMembersAsync(userParams);
 
 
-        Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, 
+        Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize,
         users.TotalCount, users.TotalPages)); //access to those methods since GetMemberAsync rertuns pagedlist.
 
         return Ok(users); //returns a new usertable filling the memberDTO instead with vals from AppUser
